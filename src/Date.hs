@@ -24,16 +24,16 @@ durationMonths :: [Month] -> Int
 durationMonths [] = 0
 durationMonths (x : xs) = daysOfMonth x + durationMonths xs
 
-monthList :: (Integral a) => a -> a -> [a]
-monthList s e
+exclusiveList :: (Integral a) => a -> a -> [a]
+exclusiveList s e
   | e < s = error "Start must be smaller than end"
   | otherwise = [s + 1 .. e - 1]
 
 duration :: Date -> Date -> Int
-duration s@(DayMonth sd sm) e@(DayMonth ed em) = daysOfMonth sm - sd + ed + durationMonths (monthList sm em)
+duration s@(DayMonth sd sm) e@(DayMonth ed em) = daysOfMonth sm - sd + ed + durationMonths (exclusiveList sm em)
 duration s@(DayMonthYear sd sm sy) e@(DayMonthYear ed em ey)
   | ey == sy = duration s e
-  | otherwise = duration s endOfYear + duration startOfYear e + sum (monthList sy ey) * 365
+  | otherwise = duration s endOfYear + duration startOfYear e + sum (exclusiveList sy ey) * 365
   where
     endOfYear = DayMonth 31 12
     startOfYear = DayMonth 1 1
