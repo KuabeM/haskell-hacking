@@ -1,8 +1,8 @@
 module Estimation where
 
-import Date
-import Data.List
-import Text.Printf
+import           Data.List
+import           Date
+import           Text.Printf
 
 usage :: (Num a, Ord a, Fractional a) => a -> a -> a
 usage a b
@@ -19,7 +19,7 @@ averageUsageInPeriod [] = []
 averageUsageInPeriod ((d, x) : xs) = [x / fromIntegral d] ++ averageUsageInPeriod xs
 
 calcAverages :: (Num a, Ord a, Fractional a) => [(Date, a)] -> [a]
-calcAverages [] = []
+calcAverages []     = []
 calcAverages period = averageUsageInPeriod (usagePerPeriod period)
 
 average :: (Fractional a) => [a] -> a

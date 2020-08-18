@@ -21,7 +21,7 @@ daysOfMonth x
   | even x = 30
 
 durationMonths :: [Month] -> Int
-durationMonths [] = 0
+durationMonths []       = 0
 durationMonths (x : xs) = daysOfMonth x + durationMonths xs
 
 exclusiveList :: (Integral a) => a -> a -> [a]
