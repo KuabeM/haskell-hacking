@@ -14,13 +14,13 @@ usagePerPeriod [] = []
 usagePerPeriod [x] = []
 usagePerPeriod ((s, x) : (e, y) : xs) = [(duration s e, usage x y)] ++ usagePerPeriod ([(e, y)] ++ xs)
 
-averageUsageInPeriod :: (Num a, Fractional a) => [(Int, a)] -> [a]
-averageUsageInPeriod [] = []
-averageUsageInPeriod ((d, x) : xs) = [x / fromIntegral d] ++ averageUsageInPeriod xs
+averageUsagePerPeriod :: (Num a, Fractional a) => [(Int, a)] -> [a]
+averageUsagePerPeriod [] = []
+averageUsagePerPeriod ((d, x) : xs) = [x / fromIntegral d] ++ averageUsagePerPeriod xs
 
 calcAverages :: (Num a, Ord a, Fractional a) => [(Date, a)] -> [a]
 calcAverages []     = []
-calcAverages period = averageUsageInPeriod (usagePerPeriod period)
+calcAverages period = averageUsagePerPeriod (usagePerPeriod period)
 
 average :: (Fractional a) => [a] -> a
 average x = sum x / fromIntegral (length x)
@@ -36,7 +36,19 @@ calcEstimatedCosts consumption baseCosts costKwh = (estimateCosts baseCosts cost
   where
     avg = calcAverages consumption
 
-prettyEstimate :: (Fractional a, Ord a, Show a, PrintfArg a) => [(Date, a)] -> a -> a -> IO ()
-prettyEstimate consumption baseCosts costKwh = putStrLn ("A consumption of " ++ printf "%.2f" p ++ "kWh will cost you " ++ printf "%.2f" c ++ "€.")
+prettyEstimate :: (Fractional a, Ord a, Show a, PrintfArg a) => [(Date, a)] -> a -> a -> String
+prettyEstimate consumption baseCosts costKwh = "A consumption of " ++ printf "%.2f" p ++ "kWh will cost you " ++ printf "%.2f" c ++ "€."
   where
     (c, p) = calcEstimatedCosts consumption baseCosts costKwh
+
+printToupleList :: (PrintfArg a) => [(Date, a)] -> String
+printToupleList [] = []
+printToupleList [(d, x)] = show d ++ printf ": %.2f" x
+printToupleList ((d, x) : xs) = show d ++ printf ": %.2f, " x ++ printToupleList xs
+
+prettyAveragesPerPeriod :: (Fractional a, PrintfArg a, Ord a) => [(Date, a)] -> String
+prettyAveragesPerPeriod consumption = "Averages: " ++ date_avgs
+  where
+    avgs = calcAverages consumption
+    (a:dates, _) = unzip consumption
+    date_avgs = printToupleList $ zip dates avgs

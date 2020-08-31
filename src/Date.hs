@@ -1,5 +1,7 @@
 module Date where
 
+import           Text.Printf
+
 type Day = Int
 
 type Month = Int
@@ -9,7 +11,7 @@ type Year = Int
 data Date
   = DayMonth Day Month
   | DayMonthYear Day Month Year
-  deriving (Show, Ord, Eq)
+  deriving (Ord, Eq)
 
 daysOfMonth :: (Integral a) => a -> a
 daysOfMonth x
@@ -37,3 +39,7 @@ duration s@(DayMonthYear sd sm sy) e@(DayMonthYear ed em ey)
   where
     endOfYear = DayMonth 31 12
     startOfYear = DayMonth 1 1
+
+instance Show Date where
+   show (DayMonth d m) = printf "%02d" d ++ "/" ++ printf "%02d" m
+   show (DayMonthYear d m y) = printf "%02d" d ++ "/" ++ printf "%02d" m ++ "/" ++ printf "%02d" y
